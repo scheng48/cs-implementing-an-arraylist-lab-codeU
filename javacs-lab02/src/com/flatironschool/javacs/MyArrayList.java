@@ -59,11 +59,30 @@ public class MyArrayList<E> implements List<E> {
 
 	@Override
 	public void add(int index, E element) {
-		if (index < 0 || index > size) {
+		if (index < 0 || index >= array.length) {
 			throw new IndexOutOfBoundsException();
 		}
-		// TODO: fill in the rest of this method
+		else if (element == null) {
+			throw new NullPointerException();
+		}
+		else if (size == array.length) {
+			E lastElement = array[size-1];
+			shiftRight(index, element);
+			add(lastElement); //increases array size and adds to size count
+		}
+		else { // there's still space to the right
+			shiftRight(index, element);
+			array[index] = element;
+			size++;
+		}
 	}
+
+	// helper function for add
+	private void shiftRight(int index, E element) {
+		for (int i = size-1; i > index; i--) {
+			array[i] = array[i-1];
+		}
+	}	
 
 	@Override
 	public boolean addAll(Collection<? extends E> collection) {
@@ -111,8 +130,12 @@ public class MyArrayList<E> implements List<E> {
 
 	@Override
 	public int indexOf(Object target) {
-		// TODO: fill in this method
-		return 0;
+		for (int i = 0; i < size; i++) {
+			if (equals(array[i], target)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	/** Checks whether an element of the array is the target.
@@ -182,8 +205,22 @@ public class MyArrayList<E> implements List<E> {
 
 	@Override
 	public E remove(int index) {
-		// TODO: fill in this method.
-		return null;
+		if (index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException();
+		}
+		else {
+			E element = array[index];
+			shiftLeft(index);
+			size--;
+			return element;
+		}
+	}
+
+	// private helper function for remove
+	private void shiftLeft(int index) {
+		for (int i = index; i < size; i++) {
+			array[i] = array[i+1];
+		}
 	}
 
 	@Override
@@ -202,8 +239,12 @@ public class MyArrayList<E> implements List<E> {
 
 	@Override
 	public E set(int index, E element) {
-		// TODO: fill in this method.
-		return null;
+		if (index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException();
+		}
+		E oldElement = array[index];
+		array[index] = element;
+		return oldElement;
 	}
 
 	@Override
